@@ -1,0 +1,110 @@
+services:
+  config-server:
+    container_name: config-server
+    image: config-server:v1
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - springcloud
+  eureka-server:
+    container_name: eureka-server
+    image: eureka-server:v1
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - springcloud
+  mysql8:
+    container_name: mysql8
+    image: mysql:8.0.40
+    ports:
+      - "3307:3306"
+    restart: always
+    networks:
+      - springcloud
+    environment:
+      MYSQL_DATABASE: db_springboot_cloud
+      MYSQL_ROOT_PASSWORD: root
+  zipkin-server:
+    container_name: zipkin-server
+    image: zipkin-server:latest
+    ports:
+      - "9411:9411"
+    restart: always
+    networks:
+      - springcloud
+    environment:
+      - STORAGE_TYPE=mysql
+      - MYSQL_USER=zipkin
+      - MYSQL_PASS=zipkin
+      - MYSQL_HOST=mysql8
+    depends_on:
+      - mysql8
+  msvc-products:
+    # container_name: msvc-products
+    image: msvc-products:latest
+    deploy:
+      replicas: 3
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - mysql8
+      - eureka-server
+      - zipkin-server
+  msvc-items:
+    container_name: msvc-items
+    image: msvc-items:latest
+    restart: always
+    ports:
+      - "8002:8002"
+      - "8005:8005"
+      - "8007:8007"
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - zipkin-server
+      - msvc-products
+  msvc-users:
+    container_name: msvc-users
+    image: msvc-users:latest
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - zipkin-server
+      - mysql8
+  msvc-oauth:
+    container_name: msvc-oauth
+    image: msvc-oauth:latest
+    restart: always
+    ports:
+      - "9100:9100"
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - zipkin-server
+      - msvc-users
+  msvc-gateway-server:
+    container_name: msvc-gateway-server
+    image: msvc-gateway-server:latest
+    restart: always
+    ports:
+      - "8090:8090"
+    networks:
+      - springcloud
+    environment:
+      IP_ADDR: http://192.168.0.101:9100
+    depends_on:
+      - eureka-server
+      - zipkin-server
+      - msvc-products
+      - msvc-items
+      - msvc-users
+      - msvc-oauth
+networks:
+  springcloud:    

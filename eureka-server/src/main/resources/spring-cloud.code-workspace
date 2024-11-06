@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../msvc-products"
+		},
+		{
+			"path": "../../../../msvc-items"
+		},
+		{
+			"path": "../../../../config"
+		},
+		{
+			"name": "libs-msvc-commons",
+			"path": "../../../../libs-msvc-commons"
+		},
+		{
+			"path": "../../../../docker-compose"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

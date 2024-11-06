@@ -1,0 +1,4 @@
+$env:STORAGE_TYPE = "mysql"
+$env:MYSQL_USER = "zipkin"
+$env:MYSQL_PASS = "zipkin"
+java -jar zipkin-server-3.4.2-exec.jar
